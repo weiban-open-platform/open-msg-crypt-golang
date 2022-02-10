@@ -8,7 +8,7 @@ import (
 	"net/http"
 	"net/url"
 	"strings"
-	"weworkapi_golang/wbjsonmsgcrypt"
+	"wbapi_golang/wbjsonmsgcrypt"
 )
 
 const token = "hJqcu3uJ9Tn2gXPmxx2w9kkCkCE2EPYo"

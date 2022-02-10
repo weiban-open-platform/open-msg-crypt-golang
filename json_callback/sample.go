@@ -3,7 +3,7 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	"weworkapi_golang/wbjsonmsgcrypt"
+	"wbapi_golang/wbjsonmsgcrypt"
 )
 
 type MsgContent struct {
@@ -23,17 +23,17 @@ func main() {
 	wbcpt := wbjsonmsgcrypt.NewWBMsgCrypt(token, encodingAeskey, receiverId, wbjsonmsgcrypt.JsonType)
 	/*
 	   	------------使用示例一：验证回调URL---------------
-	   	*企业开启回调模式时，企业微信会向验证url发送一个get请求
+	   	*企业开启回调模式时，微伴助手会向验证url发送一个get请求
 	   	假设点击验证时，企业收到类似请求：
 	   	* GET receive_weiban_message?msg_signature=8ddba101fe5f9404e6b28e2d6cfb7565c7572d09&timestamp=1639731768&nonce=64390332&echostr=505deLub74lMxyhj6SZk55rjDRxM7lEzVa/8ZFdOUWkkv9kFpNI%2B9c3YLRLDjL%2B1GEIWpvuQSFw2ck2zb0QcAQ%3D%3D
 	   	* HTTP/1.1 Host: weibanzhushou.com
 
 	   	接收到该请求时，企业应
-	        1.解析出Get请求的参数，包括消息体签名(msg_signature)，时间戳(timestamp)，随机数字串(nonce)以及企业微信推送过来的随机加密字符串(echostr),
+	        1.解析出Get请求的参数，包括消息体签名(msg_signature)，时间戳(timestamp)，随机数字串(nonce)以及微伴助手推送过来的随机加密字符串(echostr),
 	        这一步注意作URL解码。
 	        2.验证消息体签名的正确性
-	        3. 解密出echostr原文，将原文当作Get请求的response，返回给企业微信
-	        第2，3步可以用企业微信提供的库函数VerifyURL来实现。
+	        3. 解密出echostr原文，将原文当作Get请求的response，返回给微伴助手
+	        第2，3步可以用微伴助手提供的库函数VerifyURL来实现。
 
 	*/
 	// 解析出url上的参数值如下：
@@ -55,8 +55,8 @@ func main() {
 
 	/*
 		------------使用示例二：对用户回复的消息解密---------------
-		用户回复消息或者点击事件响应时，企业会收到回调消息，此消息是经过企业微信加密之后的密文以post形式发送给企业，密文格式请参考官方文档
-		假设企业收到企业微信的回调消息如下：
+		用户回复消息或者点击事件响应时，企业会收到回调消息，此消息是经过微伴助手加密之后的密文以post形式发送给企业，密文格式请参考官方文档
+		假设企业收到微伴助手的回调消息如下：
 		POST /receive_weiban_message?msg_signature=cee361999ae632f3e4b9f153475930ce0903b7b7&timestamp=1639732244&nonce=741425964 HTTP/1.1
 		Host: weibanzhushou.com
 		Content-Length: 613
@@ -70,7 +70,7 @@ func main() {
 			1.解析出url上的参数，包括消息体签名(msg_signature)，时间戳(timestamp)以及随机数字串(nonce)
 			2.验证消息体签名的正确性。
 			3.将post请求的数据进行json解析，并将"Encrypt"标签的内容进行解密，解密出来的明文即是用户回复消息的明文，明文格式请参考官方文档
-			第2，3步可以用企业微信提供的库函数DecryptMsg来实现。
+			第2，3步可以用微伴助手提供的库函数DecryptMsg来实现。
 	*/
 
 	// reqMsgSign := HttpUtils.ParseUrl("msg_signature")
@@ -113,11 +113,11 @@ func main() {
 		}
 
 		为了将此段明文回复给用户，企业应：
-			1.自己生成时间时间戳(timestamp),随机数字串(nonce)以便生成消息体签名，也可以直接用从企业微信的post url上解析出的对应值。
+			1.自己生成时间时间戳(timestamp),随机数字串(nonce)以便生成消息体签名，也可以直接用从微伴助手的post url上解析出的对应值。
 			2.将明文加密得到密文。
-			3.用密文，步骤1生成的timestamp,nonce和企业在企业微信设定的token生成消息体签名。
+			3.用密文，步骤1生成的timestamp,nonce和企业在微伴助手设定的token生成消息体签名。
 			4.将密文，消息体签名，时间戳，随机数字串拼接成json格式的字符串，发送给企业。
-			以上2，3，4步可以用企业微信提供的库函数EncryptMsg来实现。
+			以上2，3，4步可以用微伴助手提供的库函数EncryptMsg来实现。
 	*/
 	respData := `{"create_time": 1348831860,"corp_id": "11111","Content": "this is a test","app_id": "128"}`
 	encryptMsg, cryptErr := wbcpt.EncryptMsg(respData, reqTimestamp, reqNonce)
